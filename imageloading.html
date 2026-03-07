@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Loading Animation Demo</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .demo-container {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        /* The Magic: Image Loading States */
+        .img-wrapper {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #eee;
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .img-wrapper img.loaded {
+            opacity: 1;
+        }
+
+        /* Reusing our shimmering skeleton as the background */
+        .loading-shimmer {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .img-wrapper.done .loading-shimmer {
+            display: none;
+        }
+    </style>
+</head>
+<body style="background: #f3f4f6; font-family: sans-serif;">
+
+    <div style="text-align: center; padding: 40px 20px;">
+        <h2 style="margin-bottom: 10px;">Vibrant Image Loading</h2>
+        <p style="color: #666; font-size: 14px;">Images will fade in smoothly once fully downloaded.</p>
+    </div>
+
+    <div class="demo-container">
+        <!-- Card 1 -->
+        <div class="img-wrapper" id="w1">
+            <div class="skeleton-box loading-shimmer"></div>
+            <img src="https://picsum.photos/seed/monu1/400/400" onload="imageLoaded(this, 'w1')">
+        </div>
+        
+        <!-- Card 2 -->
+        <div class="img-wrapper" id="w2">
+            <div class="skeleton-box loading-shimmer"></div>
+            <img src="https://picsum.photos/seed/monu2/400/400" onload="imageLoaded(this, 'w2')">
+        </div>
+
+        <!-- Card 3 -->
+        <div class="img-wrapper" id="w3">
+            <div class="skeleton-box loading-shimmer"></div>
+            <img src="https://picsum.photos/seed/monu3/400/400" onload="imageLoaded(this, 'w3')">
+        </div>
+
+        <!-- Card 4 -->
+        <div class="img-wrapper" id="w4">
+            <div class="skeleton-box loading-shimmer"></div>
+            <img src="https://picsum.photos/seed/monu4/400/400" onload="imageLoaded(this, 'w4')">
+        </div>
+    </div>
+
+    <script>
+        function imageLoaded(img, wrapperId) {
+            // Wait a tiny bit to show off the shimmer, then fade in
+            setTimeout(() => {
+                img.classList.add('loaded');
+                document.getElementById(wrapperId).classList.add('done');
+            }, 1000); 
+        }
+    </script>
+</body>
+</html>

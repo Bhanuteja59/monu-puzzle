@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Monu Puzzle Challenge</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="index.css">
+    <script src="assets/js/data.js"></script>
+    <script>
+        function getImgCategories(filename) {
+            let f = filename.toLowerCase();
+            let cats = [];
+
+            if (/temple|konarka|vittala|stupa|shiva|parvati|ganesh|pol|mandir|church|mosque|shrine|spiritual|god|ep_|oy_|ht_/.test(f)) {
+                cats.push('Temple', 'Spiritual');
+            }
+            if (/monuments|fort|castle|palace|gate|mamallapuram|sanchi|mahal|qutub|minar|hampi|ajanta|ellora|ancient|landmark|heritage|history|sculpture|carving|pano|house|village/.test(f)) {
+                cats.push('Monuments', 'Heritage', 'Architecture', 'Landmarks', 'History', 'Ancient');
+            }
+            if (/unesco|heritage|ancient|history|monument|sanchi|hampi|ajanta|ellora|mamallapuram|temple|sculpture/.test(f)) cats.push('UNESCO');
+            if (/dance|kathak|arts|folk|stage|sculpture|painting|statue|carving|shutterstock|dreamstime|glass|ep_/.test(f)) {
+                cats.push('Dance', 'Arts', 'Sculpture');
+            }
+            if (/culture|holi|festival|india|tradition|ritual|street|local|glass|house|sunset|kitten|shutterstock|dreamstime|tradition/.test(f)) {
+                cats.push('Culture', 'Festivals', 'Tradition');
+            }
+            if (cats.length === 0) {
+                cats.push('Heritage', 'Architecture');
+            }
+            return [...new Set(cats)].join(' ');
+        }
+
+        function getImgDescription(filename, categoryStr) {
+            let f = filename.toLowerCase();
+            if (f.includes('konarka')) return "The magnificent Sun Temple of Konark, known for its intricate stone carvings and chariot design.";
+            if (f.includes('vittala') || f.includes('hampi')) return "The iconic Vittala Temple of Hampi, famous for its musical pillars and stone chariot.";
+            if (f.includes('sanchi') || f.includes('stupa')) return "The Great Stupa at Sanchi, an outstanding specimen of ancient Buddhist art and architecture.";
+            if (f.includes('ajanta') || f.includes('ellora')) return "Ancient rock-cut caves featuring exquisite paintings and timeless rock-cut sculptures.";
+            if (f.includes('qutub') || f.includes('minar')) return "The towering Qutub Minar, a UNESCO World Heritage Site representing early Islamic architecture in India.";
+            if (f.includes('taj') || f.includes('mahal')) return "The Taj Mahal, an ivory-white marble mausoleum and universal symbol of eternal love.";
+            if (f.includes('dance') || f.includes('kathak')) return "Experience the grace and intricate footwork of traditional Indian classical dance forms.";
+            if (f.includes('holi') || f.includes('festival')) return "The vibrant festival of colors celebrating the victory of good over evil and the arrival of spring.";
+            if (f.includes('ganesh')) return "A spiritual depiction of Lord Ganesha, the remover of obstacles and the god of new beginnings.";
+            if (f.includes('mamallapuram')) return "A historic town famous for its exquisite ancient Hindu group of monuments and rock-cut sanctuaries.";
+
+            if (categoryStr.includes('Temple') || categoryStr.includes('Spiritual')) return "Discover the spiritual heritage, peaceful ambiance, and intricate carvings of this sacred temple.";
+            if (categoryStr.includes('UNESCO')) return "Explore this UNESCO World Heritage site, standing as a beautiful testament to human history.";
+            if (categoryStr.includes('Monuments') || categoryStr.includes('History')) return "A magnificent monument that stands as a silent witness to centuries of rich cultural history.";
+            if (categoryStr.includes('Dance') || categoryStr.includes('Arts')) return "A beautiful depiction of Indian classical arts, cultural expressions, and storytelling traditions.";
+            if (categoryStr.includes('Culture') || categoryStr.includes('Tradition')) return "Immerse yourself in the rich tapestry of Indian tradition, vibrant festivals, and local life.";
+
+            return "Uncover the hidden stories and timeless beauty captured in this incredible historical piece.";
+        }
+
+        // Global function to handle image reveals with a "premium" delay
+        window.handleImageLoad = function (img) {
+            // Faster reveal for better responsiveness while keeping the shimmer effect visible
+            setTimeout(() => {
+                img.classList.add('loaded');
+                img.parentElement.classList.add('image-ready');
+            }, 400 + Math.random() * 400); 
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Hide loading overlay after content initializes
+            setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 500);
+                }
+            }, 1200); // 1.2s delay for a premium feel
+
+            let count = 0;
+            let limit = 500;
+            const grid = document.getElementById("main-puzzle-grid");
+            if (grid) {
+                grid.innerHTML = "";
+                for (let img of puzzleImageFiles) {
+                    if (count >= limit) break;
+                    if (img === 'holi.jpg') continue;
+                    let catString = getImgCategories(img);
+                    let description = getImgDescription(img, catString);
+                    count++;
+
+                    let statusBadge = '';
+                    if (count === 1) statusBadge = '<span class="badge-status badge-new-label">NEW</span>';
+                    else if (count === 2) statusBadge = '<span class="badge-status badge-trending">TRENDING</span>';
+                    else if (count === 3) statusBadge = '<span class="badge-status badge-latest">LATEST</span>';
+                    else if (count === 4) statusBadge = '<span class="badge-status badge-new-label">NEW</span>';
+                    else if (count === 5) statusBadge = '<span class="badge-status badge-trending">TRENDING</span>';
+
+                    let extraBadge = '';
+                    if (statusBadge) extraBadge = statusBadge;
+                    else if (img.includes('shutterstock')) extraBadge = '<span class="badge-new">PRO</span>';
+
+                    let lockHTML = '';
+                    let lockedClass = '';
+                    let isPro = img.includes('shutterstock');
+                    let hasBadge = !!(statusBadge || isPro);
+
+                    // Logic: Keep PRO and special-badged items UNLOCKED.
+                    // Lock generic items that appear after the first few "unlocked" slots.
+                    if (!hasBadge && count > 12) {
+                        lockedClass = 'locked';
+                        lockHTML = `
+                            <div class="lock-overlay">
+                                <div class="lock-icon">🔒</div>
+                                <div class="unlock-msg">Unlocks Soon</div>
+                            </div>
+                        `;
+                    }
+
+                    grid.innerHTML += `
+                    <div class="puzzle-card ${lockedClass}" 
+                         id="pcard-${count}"
+                         data-category="${catString}" 
+                         data-aos="fade-up" 
+                         data-aos-duration="600" 
+                         data-aos-delay="${(count % 10) * 50}">
+                        ${extraBadge}
+                        ${lockHTML}
+                        <!-- Our custom shimmer placeholder per card -->
+                        <div class="skeleton-box card-loader"></div>
+                        <img src="assets/images/${img}" 
+                             alt="${img}" 
+                             loading="lazy" 
+                             class="w-100 h-100 object-fit-cover"
+                             onload="handleImageLoad(this)">
+                        <div class="card-hover-overlay">
+                            <div class="hover-text">${description}</div>
+                        </div>
+                    </div>`;
+                }
+            }
+
+            const dailyScreenGrid = document.querySelector("#daily-screen .puzzle-grid");
+            if (dailyScreenGrid) {
+                dailyScreenGrid.innerHTML = "";
+                let dayCount = 0;
+                for (let img of puzzleImageFiles) {
+                    if (dayCount >= 8) break;
+                    dayCount++;
+                    let day = 9 - dayCount;
+                    let dayStr = String(day).padStart(2, '0');
+                    dailyScreenGrid.innerHTML += `
+                    <div class="puzzle-card" data-aos="zoom-in" data-aos-duration="500" data-aos-delay="${dayCount * 50}">
+                        <div class="skeleton-box card-loader"></div>
+                        <img src="assets/images/${img}" 
+                             alt="Puzzle Day" 
+                             loading="lazy" 
+                             class="w-100 h-100 object-fit-cover"
+                             onload="handleImageLoad(this)">
+                        <div class="date-badge">
+                            <div class="month">MAR</div>
+                            <div class="day">${dayStr}</div>
+                        </div>
+                    </div>`;
+                }
+            }
+
+
+            const levels = {
+                10: { name: "Hampi Ruins", type: "Expert", img: "shutterstock_1182334075.jpg" },
+                9: { name: "Ganesh Pol", type: "Expert", img: "shutterstock_140474848 Ganesh Pol.jpg" },
+                8: { name: "Ajanta Caves", type: "Master", img: "shutterstock_1048124914.jpg" },
+                7: { name: "Sas Bahu", type: "Master", img: "shutterstock_1430024843 Sas Bahu Temple.jpg" },
+                6: { name: "Sultan House", type: "Hard", img: "shutterstock_89576581 Sultana’s House (1).jpg" },
+                5: { name: "Taj Morning", type: "Hard", img: "shutterstock_1101562826.jpg" },
+                4: { name: "Qutub Minar", type: "Casual", img: "shutterstock_1073481062.jpg" },
+                3: { name: "Sun Temple", type: "Casual", img: "Konarka_Temple (4).jpg" },
+                2: { name: "Kathak Arts", type: "Casual", img: "dreamstime_xxl_223512537.jpg" },
+                1: { name: "Vittala Wheel", type: "Casual", img: "VittalaC.jpg" }
+            };
+            const journeyMap = document.querySelector('.journey-map');
+            if (journeyMap) {
+                journeyMap.innerHTML = "";
+                for (let i = 10; i >= 1; i--) {
+                    let levelData = levels[i];
+                    let isLocked = i > 3;
+                    let isCurrent = i === 3;
+                    let isCompleted = i < 3;
+                    
+                    let stateClass = isLocked ? 'locked' : (isCurrent ? 'current' : 'completed');
+                    
+                    // Add Loot Bonus for milestones (appearing visually BEFORE the level node)
+                    if (i % 5 === 0) {
+                        let lootHtml = `
+                        <div class="loot-bonus-node milestone" data-aos="zoom-in">
+                            <div class="loot-milestone-divider">
+                                <div class="milestone-line"></div>
+                                <div class="milestone-star">⭐</div>
+                                <div class="milestone-line"></div>
+                            </div>
+                            <div class="loot-badge">Loot Unlocked</div>
+                            <div class="loot-box">
+                                <div class="loot-mystery-img">
+                                    <img src="assets/images/shutterstock_1182334075.jpg" alt="Loot" onload="handleImageLoad(this)">
+                                    <div class="loot-overlay-text">?</div>
+                                </div>
+                                <div class="loot-text-content">
+                                    <h4>Level ${i} Cleared!</h4>
+                                    <p>Grab your loot of 200 Monu coins</p>
+                                </div>
+                            </div>
+                        </div>`;
+                        journeyMap.innerHTML += lootHtml;
+                    }
+
+                    let html = `
+                    <div class="journey-node ${stateClass}" data-aos="zoom-in">
+                        <div class="node-container">
+                            <div class="node-image-frame">
+                                <img src="assets/images/${levelData.img}" alt="${levelData.name}" class="node-thumb" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    ${isCompleted ? '✓' : (isLocked ? '🔒' : i)}
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL ${i}</span>
+                                <span class="node-name">${levelData.name}</span>
+                                <div class="node-meta">
+                                    <span class="node-type">${levelData.type}</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+                            ${isCurrent ? '<div class="node-current-status">ACTIVE</div>' : ''}
+                        </div>
+                    </div>`;
+                    journeyMap.innerHTML += html;
+                }
+            }
+
+            // --- My Puzzles Dynamic Population ---
+            const myPuzzlesData = {
+                inProgress: [
+                    { name: "Sanchi Stupa", img: "sanchi-stupa.jpg", progress: 45 }
+                ],
+                completed: [
+                    { name: "Panna Meena Kund", img: "shutterstock_1477532126 Panna Meena ka Kund.jpg" },
+                    { name: "Ajanta Caves", img: "shutterstock_1048124914.jpg" }
+                ]
+            };
+
+            const inProgressGrid = document.getElementById('in-progress-grid');
+            const completedGrid = document.getElementById('completed-grid');
+
+            if (inProgressGrid && completedGrid) {
+                // Populate In Progress
+                inProgressGrid.innerHTML = myPuzzlesData.inProgress.map(p => `
+                    <div class="puzzle-card progress-card" data-aos="zoom-in">
+                        <img src="assets/images/${p.img}" alt="${p.name}" onload="handleImageLoad(this)">
+                        <div class="card-action-overlay">
+                            <button class="resume-btn">Continue</button>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-top-row">
+                                <h5 class="card-title">${p.name}</h5>
+                                <span class="card-progress-badge">${p.progress}%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${p.progress}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                const progressCountElem = document.getElementById('progress-count');
+                if (progressCountElem) progressCountElem.textContent = `${myPuzzlesData.inProgress.length} ACTIVE`;
+
+                // Populate Completed
+                completedGrid.innerHTML = myPuzzlesData.completed.map((p, idx) => `
+                    <div class="puzzle-card completed-card" data-aos="zoom-in" data-aos-delay="${idx * 100}">
+                        <img src="assets/images/${p.img}" alt="${p.name}" onload="handleImageLoad(this)">
+                        <div class="completion-seal">✓</div>
+                        <div class="card-action-overlay">
+                            <button class="view-btn">View Result</button>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-top-row">
+                                <h5 class="card-title">${p.name}</h5>
+                                <span class="card-verified-badge">DONE</span>
+                            </div>
+                            <span class="card-subtitle">Museum Collection</span>
+                        </div>
+                    </div>
+                `).join('');
+                const completedCountElem = document.getElementById('completed-count');
+                if (completedCountElem) completedCountElem.textContent = `${myPuzzlesData.completed.length} PUZZLES`;
+            }
+
+            // --- Dynamic Home Slider Enhancement ---
+            const homeSlider = document.getElementById("home-slider");
+            const sliderDots = document.querySelector(".slider-dots");
+
+            if (homeSlider && typeof puzzleImageFiles !== 'undefined') {
+                homeSlider.innerHTML = "";
+                if (sliderDots) sliderDots.innerHTML = "";
+
+                // Select 4 premium images for the carousel
+                const carouselItems = [
+                    { img: "Konarka_Temple (4).jpg", tag: "Temple", title: "Konarka<br>Sun Temple" },
+                    { img: "shutterstock_1477532126 Panna Meena ka Kund.jpg", tag: "Heritage", title: "Panna<br>Meena Kund" },
+                    { img: "dreamstime_xxl_223512537.jpg", tag: "Arts", title: "Kathak<br>Classical" },
+                    { img: "sanchi-stupa.jpg", tag: "UNESCO", title: "Sanchi<br>Great Stupa" }
+                ];
+
+                carouselItems.forEach((item, idx) => {
+                    // Create Slide
+                    const slide = document.createElement("div");
+                    slide.className = "featured-card";
+                    slide.innerHTML = `
+                        <div class="featured-img-container">
+                            <img src="assets/images/${item.img}" alt="${item.title}" class="w-100 h-100 object-fit-cover">
+                            <div class="featured-info">
+                                <div class="featured-text">
+                                    <span class="featured-tag">PRO: ${item.tag}</span>
+                                    <h2 class="featured-title">${item.title}</h2>
+                                </div>
+                                <button class="featured-play-btn">Play Now</button>
+                            </div>
+                        </div>
+                    `;
+                    homeSlider.appendChild(slide);
+
+                    // Create Dot
+                    if (sliderDots) {
+                        const dot = document.createElement("div");
+                        dot.className = `dot ${idx === 0 ? 'active' : ''}`;
+                        sliderDots.appendChild(dot);
+                    }
+                });
+
+                // Re-initialize slider logic from ui.js now that cards exist
+                if (window.initHomeSlider) {
+                    window.initHomeSlider();
+                }
+            }
+
+            // Set dynamic image for the global progress card
+            const progressImg = document.querySelector("#global-progress-card .progress-thumb img");
+            if (progressImg && typeof puzzleImageFiles !== 'undefined' && puzzleImageFiles.length > 0) {
+                const validImages = puzzleImageFiles.filter(img => !img.includes('glass') && !img.includes('gem') && !img.includes('icon'));
+                if (validImages.length > 0) {
+                    const randomImg = validImages[Math.floor(Math.random() * validImages.length)];
+                    progressImg.src = `assets/images/${randomImg}`;
+                }
+            }
+
+            // Also update the "My Puzzles" progress card image
+            const myPuzzlesImg = document.querySelector("#mypuzzles-screen .puzzle-card img[alt='In Progress']");
+            if (myPuzzlesImg && progressImg && progressImg.src) {
+                myPuzzlesImg.src = progressImg.src;
+            }
+
+        });
+    </script>
+
+</head>
+
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="puzzle-corners">
+            <svg class="corner-piece top-left" viewBox="0 0 100 100">
+                <path d="M0,0 H100 V100 H0 Z" fill="#f59e0b" fill-opacity="0.1" />
+            </svg>
+            <svg class="corner-piece top-right" viewBox="0 0 100 100">
+                <path d="M0,0 H100 V100 H0 Z" fill="#f59e0b" fill-opacity="0.1" />
+            </svg>
+            <svg class="corner-piece bottom-left" viewBox="0 0 100 100">
+                <path d="M0,0 H100 V100 H0 Z" fill="#f59e0b" fill-opacity="0.1" />
+            </svg>
+            <svg class="corner-piece bottom-right" viewBox="0 0 100 100">
+                <path d="M0,0 H100 V100 H0 Z" fill="#f59e0b" fill-opacity="0.1" />
+            </svg>
+        </div>
+        <div class="splash-logo">
+            <span class="splash-logo-icon">🧩</span>
+            MonuPuzzle
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <header class="top-header"
+            style="height: 60px; background: white; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee;">
+            <div class="skeleton-box" style="height: 24px; width: 120px; border-radius: 4px;"></div>
+            <div class="skeleton-box" style="height: 32px; width: 80px; border-radius: 20px;"></div>
+        </header>
+        <div class="content-wrapper" style="flex: 1; padding: 16px;">
+            <div class="skeleton-box" style="height: 220px; border-radius: 20px; width: 100%; margin-bottom: 24px;">
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                <div class="skeleton-box" style="height: 38px; width: 70px; border-radius: 20px;"></div>
+                <div class="skeleton-box" style="height: 38px; width: 110px; border-radius: 20px;"></div>
+                <div class="skeleton-box" style="height: 38px; width: 100px; border-radius: 20px;"></div>
+            </div>
+            <div class="puzzle-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="skeleton-box skeleton-card"></div>
+                <div class="skeleton-box skeleton-card"></div>
+                <div class="skeleton-box skeleton-card"></div>
+                <div class="skeleton-box skeleton-card"></div>
+            </div>
+        </div>
+        <div
+            style="height: 70px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-around;">
+            <div class="skeleton-box" style="height: 30px; width: 30px; border-radius: 6px;"></div>
+            <div class="skeleton-box" style="height: 30px; width: 30px; border-radius: 6px;"></div>
+            <div class="skeleton-box" style="height: 30px; width: 30px; border-radius: 6px;"></div>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <!-- Top Header -->
+        <header class="top-header">
+            <button id="global-back-btn" class="back-btn" style="display: none; margin-right: 10px;" onclick="goBack()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
+            <h1 class="screen-title" id="current-screen-title">MonuPuzzle</h1>
+            <div class="header-right-tools">
+                <div class="currency-badge">
+                    <img src="assets/images/gem_icon_white.jpg" alt="Gem" class="currency-gem">
+                    <span id="gem-count">105</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Library Screen -->
+        <div id="library-screen" class="screen">
+            <div class="content-wrapper">
+                <!-- New Section Title -->
+                <div class="slider-header-container">
+                    <h2 class="slider-main-heading">Explore</h2>
+                    <p class="slider-sub-heading">India's Ancient Wonders</p>
+                </div>
+
+                <!-- Featured Puzzle Slider -->
+                <div class="featured-slider-wrapper">
+                    <div class="featured-slider" id="home-slider">
+                        <!-- JS will dynamically populate featured cards here -->
+                    </div>
+                    <div class="slider-dots">
+                        <!-- JS will dynamically populate dots here -->
+                    </div>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="tabs-wrapper ">
+                    <div class="tabs-scroll Container">
+                        <div class="tab-indicator" id="tab-active-pill"></div>
+                        <div class="tab active" onclick="filterCategory('All', this)">
+                            <span>🏠 All</span>
+                        </div>
+                        <div class="tab" onclick="filterCategory('Temple', this)">
+                            <span>⛩️ Temples</span>
+                        </div>
+                        <div class="tab" onclick="filterCategory('Monuments', this)">
+                            <span>🏛️ Monuments</span>
+                        </div>
+                        <div class="tab" onclick="filterCategory('UNESCO', this)">
+                            <span>🌍 UNESCO</span>
+                        </div>
+                        <div class="tab" onclick="filterCategory('Dance', this)">
+                            <span>💃 Dance</span>
+                        </div>
+                        <div class="tab" onclick="filterCategory('Culture', this)">
+                            <span>🎨 Culture</span>
+                        </div>
+                    </div>
+                    <div class="category-menu-btn" onclick="openCategoryModal()">☰</div>
+                </div>
+
+                <!-- Puzzle Grid -->
+                <div class="puzzle-grid" id="main-puzzle-grid">
+                    <!-- JS will populate cards here -->
+                </div>
+            </div>
+        </div>
+        <!-- Daily Puzzles Screen (Hidden by default) -->
+        <div id="daily-screen" class="screen">
+            <div class="content-wrapper">
+                <div class="featured-card">
+                    <div class="featured-img-container">
+                        <img src="assets/images/slide/dairyslide.jpeg" alt="March 06"
+                            class="w-100 h-100 object-fit-cover">
+                        <div class="date-badge">
+                            <div class="month">MARCH</div>
+                            <div class="day">06</div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="daily-title-row">
+                    <div class="daily-title-content">
+                        <h3 class="m-0">March</h3>
+                        <div class="daily-progress-container">
+                            <div class="daily-progress-bar" style="width: 15%;"></div>
+                        </div>
+                    </div>
+                    <span class="daily-status">4/31 <small>Solved</small></span>
+                </div>
+
+                <div class="puzzle-grid">
+                    <!-- JS will populate daily cards here -->
+                </div>
+            </div>
+        </div>
+        <!-- Journey Screen -->
+        <div id="journey-screen" class="screen">
+            <!-- Animated Premium SVG Puzzle Background -->
+            <div class="journey-bg-particles">
+                <div class="particle p1">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
+                    </svg>
+                </div>
+                <div class="particle p2">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
+                    </svg>
+                </div>
+                <div class="particle p3">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
+                    </svg>
+                </div>
+                <div class="particle p4">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
+                    </svg>
+                </div>
+                <div class="particle p5">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
+                    </svg>
+                </div>
+                <div class="particle p6">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="content-wrapper">
+                <div class="journey-map">
+                    <!-- JS will populate nodes here -->
+                </div>
+            </div>
+            <div class="journey-footer">
+                <div class="journey-reward-badge">
+                    <span class="coin-icon">🟡</span> Unlock 150 Monu Coins in Level 3
+                </div>
+                <button class="journey-play-btn">Play Level 3</button>
+            </div>
+        </div>
+
+        <!-- My Puzzles Screen -->
+        <div id="mypuzzles-screen" class="screen">
+            <div class="content-wrapper">
+                <!-- In Progress Section -->
+                <div class="section-header">
+                    <div class="header-main">
+                        <span class="header-icon">🕒</span>
+                        <h3>In Progress</h3>
+                    </div>
+                    <span id="progress-count" class="puzzle-count-pill">0 ACTIVE</span>
+                </div>
+                <div id="in-progress-grid" class="puzzle-grid my-puzzles-grid">
+                    <!-- Dynamic Progress Puzzles -->
+                </div>
+
+                <!-- Completed Section -->
+                <div class="section-header mt-5">
+                    <div class="header-main">
+                        <span class="header-icon">🏆</span>
+                        <h3>Completed</h3>
+                    </div>
+                    <span id="completed-count" class="puzzle-count-pill">0 PUZZLES</span>
+                </div>
+                <div id="completed-grid" class="puzzle-grid my-puzzles-grid">
+                    <!-- Dynamic Completed Puzzles -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Choose Pieces Screen -->
+        <div id="setup-screen" class="screen">
+            <header class="top-header">
+                <button class="back-btn" onclick="goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+                <h1 class="screen-title setup-title">Choose Pieces</h1>
+                <div class="setup-header-spacer"></div>
+            </header>
+            <div class="content-wrapper">
+                <div class="puzzle-preview-container">
+                    <img id="setup-puzzle-img" src="assets/images/house.jpg" alt="Setup Puzzle">
+
+                </div>
+            </div>
+            <div class="difficulty-selector">
+                <span class="difficulty-label">Casual</span>
+                <div class="piece-options">
+                    <div class="piece-option" onclick="selectDifficulty(36)">
+                        <span class="count">36</span>
+                        <span class="label">Pieces</span>
+                    </div>
+                    <div class="piece-option active" onclick="selectDifficulty(64)">
+                        <span class="count">64</span>
+                        <span class="label">Pieces</span>
+                    </div>
+                    <div class="piece-option" onclick="selectDifficulty(100)">
+                        <span class="count">100</span>
+                        <span class="label">Pieces</span>
+                    </div>
+
+                </div>
+                <button class="play-btn btn btn-warning text-white" onclick="switchScreen('game')">Play</button>
+            </div>
+        </div>
+
+        <!-- Gameplay Screen -->
+        <div id="game-screen" class="screen">
+            <header class="game-header">
+                <button class="tool-icon tool-icon-btn back-btn-premium" onclick="goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+                <div class="game-header-tools">
+
+                    <span class="piece-counter" id="game-piece-count">35</span>
+                    <span class="tool-icon position-relative" onclick="gameEngine.useHint()">💡<span
+                            class="hint-badge-icon">3</span></span>
+                    <span class="tool-icon" onclick="gameEngine.shuffleTray()">🧩</span>
+                    <span class="tool-icon" id="preview-eye-icon" onclick="toggleImagePreview()">👁️</span>
+                    <span class="tool-icon" onclick="toggleBackgroundModal()">🎨</span>
+                </div>
+            </header>
+
+            <div class="image-preview-dropdown" id="game-image-preview">
+                <img id="game-preview-img" src="" alt="Preview">
+            </div>
+
+            <div class="game-canvas-area" id="game-canvas-container">
+                <canvas id="game-puzzle-canvas"></canvas>
+                <!-- Logic for plus 20 overlay -->
+                <div id="points-overlay">+20</div>
+            </div>
+
+            <div class="piece-tray" id="tray-area">
+                <!-- Engine will populate this -->
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="switchScreen('library')">
+                <div class="nav-icon nav-icon-home"></div>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" onclick="switchScreen('daily')">
+                <div class="nav-icon nav-icon-daily"></div>
+                <span>Daily</span>
+            </div>
+            <div class="nav-item" onclick="switchScreen('journey')">
+                <div class="nav-icon nav-icon-journey"></div>
+                <span>Journey</span>
+            </div>
+            <div class="nav-item" onclick="switchScreen('mypuzzles')">
+                <div class="nav-icon nav-icon-mypuzzles"></div>
+                <span>My Puzzles</span>
+            </div>
+        </nav>
+
+        <!-- In Progress Card Overlay -->
+        <div class="progress-card" id="global-progress-card">
+            <div class="progress-thumb">
+                <img src="assets/images/glass.jpg" alt="In Progress">
+            </div>
+            <div class="progress-info">
+                <span class="progress-label">In Progress</span>
+                <div class="progress-percent">3%</div>
+            </div>
+            <button class="resume-btn">→</button>
+        </div>
+
+        <!-- Category Modal -->
+        <div class="modal-overlay" id="category-modal-overlay">
+            <div class="category-modal">
+                <div class="category-item active">
+                    <img src="assets/images/shutterstock_693066103.jpg" alt="All" onload="handleImageLoad(this)">
+                    <span>All</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/Konarka_Temple (4).jpg" alt="Temple" onload="handleImageLoad(this)">
+                    <span>Temples</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/VittalaC.jpg" alt="Monuments" onload="handleImageLoad(this)">
+                    <span>Monuments</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/mamallapuram.jpg" alt="UNESCO" onload="handleImageLoad(this)">
+                    <span>UNESCO</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/_EP_3726.jpg" alt="Dance" onload="handleImageLoad(this)">
+                    <span>Dance</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/shutterstock_599694770.jpg" alt="Culture" onload="handleImageLoad(this)">
+                    <span>Culture</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/holi.jpg" alt="Festivals" onload="handleImageLoad(this)">
+                    <span>Festivals</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/sanchi-stupa.jpg" alt="Heritage" onload="handleImageLoad(this)">
+                    <span>Heritage</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/shutterstock_110301533 Western Monuments.jpg" alt="Architecture" onload="handleImageLoad(this)">
+                    <span>Architecture</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/VittalaC.jpg" alt="History" onload="handleImageLoad(this)">
+                    <span>History</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/glass.jpg" alt="Arts" onload="handleImageLoad(this)">
+                    <span>Arts</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/shutterstock_140474848 Ganesh Pol.jpg" alt="Tradition" onload="handleImageLoad(this)">
+                    <span>Tradition</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/shutterstock_1430024843 Sas Bahu Temple.jpg" alt="Spiritual" onload="handleImageLoad(this)">
+                    <span>Spiritual</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/IMG_4319.jpg" alt="Landmarks" onload="handleImageLoad(this)">
+                    <span>Landmarks</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/VittalaC.jpg" alt="Sculpture" onload="handleImageLoad(this)">
+                    <span>Sculpture</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/mamallapuram.jpg" alt="Ancient" onload="handleImageLoad(this)">
+                    <span>Ancient</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Background Selection Modal -->
+        <div class="modal-overlay" id="background-modal-overlay">
+            <div class="background-modal">
+                <h3 class="bg-modal-title">Board Background</h3>
+                <div class="color-options">
+                    <div class="color-swatch bg-swatch-1 active" onclick="changeBoardBackground('#0f172a')"></div>
+                    <div class="color-swatch bg-swatch-2" onclick="changeBoardBackground('#1e293b')"></div>
+                    <div class="color-swatch bg-swatch-3" onclick="changeBoardBackground('#334155')"></div>
+                    <div class="color-swatch bg-swatch-4" onclick="changeBoardBackground('#262626')"></div>
+                    <div class="color-swatch bg-swatch-5" onclick="changeBoardBackground('#171717')"></div>
+                    <div class="color-swatch bg-swatch-6" onclick="changeBoardBackground('#000000')"></div>
+                    <div class="color-swatch bg-swatch-7" onclick="changeBoardBackground('#4c1d95')"></div>
+                    <div class="color-swatch bg-swatch-8" onclick="changeBoardBackground('#1e3a8a')"></div>
+                    <div class="color-swatch bg-swatch-9" onclick="changeBoardBackground('#064e3b')"></div>
+                    <div class="color-swatch bg-swatch-10" onclick="changeBoardBackground('#701a75')"></div>
+                    <div class="color-swatch bg-swatch-11" onclick="changeBoardBackground('#f3f4f6')"></div>
+                    <div class="color-swatch bg-swatch-12" onclick="changeBoardBackground('#d1d5db')"></div>
+                </div>
+                <button class="palette-done-btn" onclick="toggleBackgroundModal()">Done</button>
+            </div>
+        </div>
+
+        <!-- Win Overlay -->
+        <div id="win-overlay" class="win-screen-overlay">
+            <div class="confetti-container" id="confetti"></div>
+
+            <div class="win-content">
+                <div class="win-header">
+                    <div class="puzzle-piece-icon"></div>
+                    <h2 class="excellent-title">Excellent!</h2>
+                    <p class="puzzle-completed-subtitle">Puzzle Completed!</p>
+                </div>
+
+                <div class="reward-section">
+                    <div class="gem-glow-rays"></div>
+                    <img src="assets/images/gem_pile_screen.jpg" class="reward-gem-img" alt="Gems">
+                    <div class="reward-badge-hexagon">
+                        <span>+15</span>
+                    </div>
+                </div>
+
+                <div class="next-puzzle-section">
+                    <p class="next-puzzle-title">Choose Next Puzzle</p>
+                    <p class="next-timer">Next puzzle in 5s</p>
+                </div>
+
+                <div class="win-buttons">
+                    <button class="claim-triple-btn btn btn-success" onclick="location.reload()">
+                        Claim ×3 <span class="video-icon">▶</span>
+                    </button>
+                    <button class="claim-standard-btn btn btn-primary" onclick="location.reload()">
+                        Claim
+                    </button>
+                </div>
+
+                <button class="more-puzzles-footer-btn btn btn-outline-light" onclick="location.reload()">
+                    More Puzzles
+                </button>
+            </div>
+        </div>
+
+        <script src="assets/js/engine.js"></script>
+        <script src="assets/js/ui.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- AOS Animation Library -->
+        <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+        <script>
+            // AOS expects the window to scroll, but our app uses internal floating .screen divs!
+            // To fix this, we initialize AOS without its default scroll listener...
+            AOS.init({
+                disable: true
+            });
+
+            // ...and we attach our own highly-performant IntersectionObserver
+            // that perfectly tracks cards scrolling inside the internal screens!
+            setTimeout(() => {
+                const scrollObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('aos-animate');
+                        } else {
+                            // Mirror effect: reset animation when scrolled out of view
+                            entry.target.classList.remove('aos-animate');
+                        }
+                    });
+                }, {
+                    threshold: 0.05,
+                    rootMargin: '50px'
+                });
+
+                document.querySelectorAll('[data-aos]').forEach(el => {
+                    scrollObserver.observe(el);
+                });
+            }, 300);
+        </script>
+</body>
+
+</html>
