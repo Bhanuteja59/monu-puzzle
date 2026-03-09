@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Loading...</title>
+    <style>
+        :root {
+            --primary: #ea580c;
+            --primary-light: #fbbf24;
+            --bg-dark: #0f172a;
+            --piece-size: 80px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            perspective: 2000px;
+        }
+
+        .loader-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+            opacity: 0;
+            animation: wrapper-fade-in 0.5s forwards;
+        }
+
+        @keyframes wrapper-fade-in {
+            to { opacity: 1; }
+        }
+
+        /* 3D Arena */
+        .puzzle-arena {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            transform-style: preserve-3d;
+            transform: rotateX(20deg) rotateY(-10deg);
+            animation: arena-entrance 4s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes arena-entrance {
+            0% { transform: rotateX(45deg) rotateY(-30deg) scale(0.8) translateZ(-500px); }
+            40% { transform: rotateX(20deg) rotateY(-10deg) scale(1.1) translateZ(50px); }
+            100% { transform: rotateX(25deg) rotateY(-15deg) scale(1) translateZ(0); }
+        }
+
+        /* Jigsaw Piece Core */
+        .piece {
+            position: absolute;
+            width: var(--piece-size);
+            height: var(--piece-size);
+            background: var(--primary);
+            border-radius: 4px;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: piece-assemble 4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .tab, .slot {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+        }
+        .tab { background: var(--primary); }
+        .slot { background: var(--bg-dark); box-shadow: inset 0 4px 10px rgba(0,0,0,0.6); }
+
+        /* Piece Positions & Delays */
+        .p1 { top: 0; left: 0; --ox: -400px; --oy: -400px; --rz: -120deg; animation-delay: 0.1s; }
+        .p1 .tab-r { right: -13px; top: 27px; }
+        .p1 .tab-b { bottom: -13px; left: 27px; }
+
+        .p2 { top: 0; left: var(--piece-size); --ox: 400px; --oy: -400px; --rz: 120deg; animation-delay: 0.3s; }
+        .p2 .slot-l { left: -13px; top: 27px; }
+        .p2 .tab-b { bottom: -13px; left: 27px; }
+
+        .p3 { top: var(--piece-size); left: 0; --ox: -400px; --oy: 400px; --rz: 90deg; animation-delay: 0.5s; }
+        .p3 .slot-t { top: -13px; left: 27px; }
+        .p3 .tab-r { right: -13px; top: 27px; }
+
+        .p4 { top: var(--piece-size); left: var(--piece-size); --ox: 400px; --oy: 400px; --rz: -90deg; animation-delay: 0.7s; }
+        .p4 { background: var(--primary-light); }
+        .p4 .slot-t { top: -13px; left: 27px; }
+        .p4 .slot-l { left: -13px; top: 27px; }
+        .p4 .tab { background: var(--primary-light); } 
+
+        @keyframes piece-assemble {
+            0% { 
+                opacity: 0;
+                transform: translate3d(var(--ox), var(--oy), 1000px) rotateZ(var(--rz)) scale(0.2);
+                filter: blur(20px);
+            }
+            30% {
+                opacity: 1;
+                transform: translate3d(calc(var(--ox) * 0.2), calc(var(--oy) * 0.2), 200px) rotateZ(0) scale(1.2);
+                filter: blur(0);
+            }
+            60%, 100% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+        }
+
+        /* Success Pulse on Finish */
+        .success-glow {
+            position: absolute;
+            inset: -40px;
+            background: radial-gradient(circle, rgba(234, 88, 12, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: success-burst 4s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes success-burst {
+            0%, 65% { opacity: 0; transform: scale(0.5); }
+            75% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+
+        /* UI Branding */
+        .ui-panel {
+            text-align: center;
+            z-index: 100;
+        }
+
+        .level-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: var(--primary-light);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: level-reveal 4s ease-out forwards;
+        }
+
+        @keyframes level-reveal {
+            0%, 60% { opacity: 0; transform: translateY(10px); }
+            75%, 100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            color: white;
+            font-size: 28px;
+            font-weight: 950;
+            letter-spacing: -1px;
+            margin: 0 0 30px 0;
+            font-style: italic;
+            opacity: 0;
+            animation: title-reveal 4s ease-out forwards;
+        }
+
+        @keyframes title-reveal {
+            0%, 20% { opacity: 0; transform: scale(0.9); }
+            40%, 100% { opacity: 1; transform: scale(1); }
+        }
+
+        .progress-track {
+            width: 280px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            box-shadow: 0 0 20px var(--primary);
+            animation: progress-fill 4s cubic-bezier(0.1, 0, 0.1, 1) forwards;
+        }
+
+        @keyframes progress-fill {
+            0% { width: 0%; }
+            65% { width: 100%; }
+            100% { width: 100%; }
+        }
+
+        /* Particles */
+        .stars { position: absolute; inset: 0; z-index: -1; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.1; }
+
+    </style>
+</head>
+
+<body>
+    <div class="stars" id="starfield"></div>
+
+    <div class="loader-wrapper">
+        <div class="puzzle-arena">
+            <div class="success-glow"></div>
+            <!-- Assemble Pieces -->
+            <div class="piece p1">
+                <div class="tab tab-r"></div>
+                <div class="tab tab-b"></div>
+            </div>
+            <div class="piece p2">
+                <div class="slot slot-l"></div>
+                <div class="tab tab-b"></div>
+            </div>
+            <div class="piece p3">
+                <div class="slot slot-t"></div>
+                <div class="tab tab-r"></div>
+            </div>
+            <div class="piece p4">
+                <div class="slot slot-t"></div>
+                <div class="slot slot-l"></div>
+            </div>
+        </div>
+
+        <div class="ui-panel">
+            <div class="level-badge">Explorer Level 12</div>
+            <h1 class="title">Generating Journey</h1>
+            <div class="progress-track">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Particles
+        const field = document.getElementById('starfield');
+        for (let i = 0; i < 30; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.left = Math.random() * 100 + 'vw';
+            field.appendChild(star);
+        }
+    </script>
+</body>
+
+</html>

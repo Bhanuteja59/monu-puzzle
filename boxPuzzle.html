@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MonuSlider - Slider Puzzle</title>
+
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Bootstrap & CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="boxPuzzle.css">
+
+    <style>
+        /* Prevents pull-to-refresh and keeps app feeling native */
+        body { overscroll-behavior-y: contain; }
+    </style>
+</head>
+
+<body class="is-box-mode is-slider-mode">
+    <!-- Premium Unified Splash Screen -->
+    <div id="splash-screen">
+        <div class="logo-container">
+            <div class="logo-glow"></div>
+            <div class="piece p-red"></div>
+            <div class="piece p-blue"></div>
+            <div class="piece p-yellow"></div>
+            <div class="piece p-green"></div>
+        </div>
+        <div class="app-name">MONUPUZZLE</div>
+        <div class="powered-by">Powered by Pleach</div>
+    </div>
+
+    <div id="loading-overlay">
+        <header class="top-header"
+            style="height: 60px; background: white; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee;">
+            <div class="skeleton-box" style="height: 24px; width: 120px; border-radius: 4px;"></div>
+            <div class="skeleton-box" style="height: 32px; width: 80px; border-radius: 20px;"></div>
+        </header>
+        <div class="content-wrapper" style="flex: 1; padding: 16px;">
+            <div class="skeleton-box" style="height: 220px; border-radius: 20px; width: 100%; margin-bottom: 24px;">
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                <div class="skeleton-box" style="height: 38px; width: 70px; border-radius: 20px;"></div>
+                <div class="skeleton-box" style="height: 38px; width: 110px; border-radius: 20px;"></div>
+                <div class="skeleton-box" style="height: 38px; width: 100px; border-radius: 20px;"></div>
+            </div>
+            <div class="puzzle-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="skeleton-box skeleton-card"></div>
+                <div class="skeleton-box skeleton-card"></div>
+                <div class="skeleton-box skeleton-card"></div>
+                <div class="skeleton-box skeleton-card"></div>
+            </div>
+        </div>
+        <div
+            style="height: 70px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-around;">
+            <div class="skeleton-box" style="height: 30px; width: 30px; border-radius: 6px;"></div>
+            <div class="skeleton-box" style="height: 30px; width: 30px; border-radius: 6px;"></div>
+            <div class="skeleton-box" style="height: 30px; width: 30px; border-radius: 6px;"></div>
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div id="game-container">
+        <!-- Top Header -->
+        <header class="top-header">
+            <h1 class="screen-title" id="current-screen-title" onclick="switchScreen('library')" style="cursor: pointer;">MonuSlider</h1>
+            <div class="header-right-tools">
+                <button class="header-icon-btn" title="News">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+                        <path d="M18 14h-8" />
+                        <path d="M15 18h-5" />
+                        <path d="M10 6h8v4h-8V6Z" />
+                    </svg>
+                </button>
+                <button class="header-icon-btn" title="Awards">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                    </svg>
+                </button>
+                <button class="header-icon-btn" id="profile-trigger" onclick="toggleProfileMenu()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1" />
+                        <circle cx="12" cy="5" r="1" />
+                        <circle cx="12" cy="19" r="1" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Library Screen -->
+        <div id="library-screen" class="screen" style="display: block;">
+            <div class="content-wrapper">
+                <div class="screen-toggle-bar">
+                    <button class="toggle-btn" onclick="window.location.href='index.html'">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
+                        </svg>
+                        Jigsaw Puzzles
+                    </button>
+                    <button class="toggle-btn active" onclick="switchLibraryTab('box', this)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="12" y1="3" x2="12" y2="21" />
+                            <line x1="3" y1="12" x2="21" />
+                        </svg>
+                        Box Puzzle
+                    </button>
+                </div>
+
+                <div id="tab-box" class="library-tab-content active">
+                    <div class="slider-header-container">
+                        <h2 class="slider-main-heading">Explore</h2>
+                        <p class="slider-sub-heading">India's Ancient Wonders</p>
+                    </div>
+
+                    <div class="featured-slider-wrapper">
+                        <div class="featured-slider" id="home-slider"></div>
+                        <div class="slider-dots"></div>
+                    </div>
+
+                    <div class="tabs-wrapper ">
+                        <div class="tabs-scroll Container">
+                            <div class="tab-indicator" id="tab-active-pill" style="width: 82px; left: 2px; height: 43px; top: 4px;"></div>
+                            <div class="tab active" onclick="filterCategory('All', this)">
+                                <span>🏠 All</span>
+                            </div>
+                            <div class="tab" onclick="filterCategory('Temple', this)">
+                                <span>⛩️ Temples</span>
+                            </div>
+                            <div class="tab" onclick="filterCategory('Monuments', this)">
+                                <span>🏛️ Monuments</span>
+                            </div>
+                            <div class="tab" onclick="filterCategory('UNESCO', this)">
+                                <span>🌍 UNESCO</span>
+                            </div>
+                            <div class="tab" onclick="filterCategory('Dance', this)">
+                                <span>💃 Dance</span>
+                            </div>
+                            <div class="tab" onclick="filterCategory('Culture', this)">
+                                <span>🎨 Culture</span>
+                            </div>
+                        </div>
+                        <div class="category-menu-btn" onclick="openCategoryModal()">☰</div>
+                    </div>
+
+                    <div class="puzzle-grid" id="main-puzzle-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Puzzles Screen -->
+        <div id="daily-screen" class="screen" style="display: none;">
+            <div class="content-wrapper">
+                <div class="featured-card">
+                    <div class="featured-img-container">
+                        <img src="assets/images/slide/dairyslide.jpeg" alt="Daily Slide" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div class="date-badge">
+                            <div class="month">MARCH</div>
+                            <div class="day">09</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="daily-title-row">
+                    <div class="daily-title-content">
+                        <h3 class="m-0">March</h3>
+                        <div class="daily-progress-container">
+                            <div class="daily-progress-bar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <span class="daily-status">0/31 Solved</span>
+                </div>
+                <div class="puzzle-grid" id="daily-puzzle-grid"></div>
+            </div>
+        </div>
+
+        <!-- Journey Screen -->
+        <div id="journey-screen" class="screen" style="display: none;">
+            <div class="content-wrapper">
+                <div class="journey-map" id="journey-map-slider"></div>
+            </div>
+        </div>
+
+        <!-- My Puzzles Screen -->
+        <div id="mypuzzles-screen" class="screen" style="display: none;">
+            <div class="content-wrapper">
+                <div class="profile-blocks">
+                    <div class="profile-block">
+                        <div class="profile-header">
+                            <div class="profile-avatar-container">
+                                <div class="profile-avatar">👤</div>
+                                <div class="level-badge">1</div>
+                            </div>
+                            <div class="profile-info">
+                                <h3>Slider Explorer</h3>
+                                <div class="xp-progress-bar-container">
+                                    <div class="xp-label">0 / 500 XP</div>
+                                    <div class="xp-bar-outer"><div class="xp-bar-fill" style="width: 0%;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-block stats-grid-block" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                        <div class="stat-card" style="background: #f8fafc; padding: 16px; border-radius: 16px; text-align: center;">
+                            <span class="stat-label" style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Solved</span>
+                            <span class="stat-value" style="font-size: 20px; font-weight: 800; color: #0f172a;">0</span>
+                        </div>
+                        <div class="stat-card" style="background: #f8fafc; padding: 16px; border-radius: 16px; text-align: center;">
+                            <span class="stat-label" style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Stars</span>
+                            <span class="stat-value" style="font-size: 20px; font-weight: 800; color: #0f172a;">⭐ 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Screen -->
+        <div id="setup-screen" class="screen" style="display: none;">
+            <header class="top-header">
+                <button class="back-btn" onclick="switchScreen('library')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+                <h1 class="screen-title setup-title">Choose Difficulty</h1>
+            </header>
+            <div class="content-wrapper">
+                <div class="puzzle-preview-container">
+                    <img id="setup-puzzle-img" src="assets/images/house.jpg" alt="Setup">
+                    <div id="grid-overlay-preview"></div>
+                </div>
+            </div>
+            <div class="difficulty-selector">
+                <span class="difficulty-label">Casual</span>
+                <div class="piece-options">
+                    <div class="piece-option" onclick="selectDifficulty(9)"><span class="count">9</span><span class="label">Pieces</span></div>
+                    <div class="piece-option active" onclick="selectDifficulty(16)"><span class="count">16</span><span class="label">Pieces</span></div>
+                    <div class="piece-option" onclick="selectDifficulty(25)"><span class="count">25</span><span class="label">Pieces</span></div>
+                    <div class="piece-option" onclick="selectDifficulty(36)"><span class="count">36</span><span class="label">Pieces</span></div>
+                </div>
+                <button class="play-btn btn btn-warning text-white" onclick="switchScreen('game')">Play Now</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen" style="display: none;">
+            <header class="game-header">
+                <button class="tool-icon-btn back-btn-premium" onclick="switchScreen('setup')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+                <div class="game-header-tools">
+                    <span class="tool-icon" onclick="toggleImagePreview()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+                    <span class="tool-icon" onclick="toggleBackgroundModal()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3 1.912 5.886h6.19l-5.007 3.638L17.007 18.41 12 14.772l-5.007 3.638 1.912-5.886L3.898 8.886h6.19L12 3z"/></svg></span>
+                </div>
+            </header>
+            <div class="image-preview-dropdown" id="game-image-preview"><img id="game-preview-img" src=""></div>
+            <div class="game-canvas-area" id="game-canvas-container">
+                <div id="slider-board"></div>
+                <div id="moves-count">Moves: 0</div>
+                <div id="points-overlay">+20</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" id="nav-home" onclick="switchScreen('library')">
+                <div class="nav-icon nav-icon-home"></div>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" id="nav-daily" onclick="switchScreen('daily')">
+                <div class="nav-icon nav-icon-daily"></div>
+                <span>Daily</span>
+            </div>
+
+            <div class="nav-item" id="nav-journey" onclick="switchScreen('journey')">
+                <div class="nav-icon nav-icon-journey"></div>
+                <span>Journey</span>
+            </div>
+            <div class="nav-item" id="nav-mypuzzles" onclick="switchScreen('mypuzzles')">
+                <div class="nav-icon nav-icon-mypuzzles"></div>
+                <span>Profile</span>
+            </div>
+        </nav>
+
+        <!-- Win Overlay (Matched with index.html) -->
+        <div id="win-overlay" class="win-screen-overlay">
+            <div class="confetti-container" id="confetti"></div>
+            <div class="win-content">
+                <div class="win-header">
+                    <div class="puzzle-piece-icon"></div>
+                    <h2 class="excellent-title">Excellent!</h2>
+                    <p class="puzzle-completed-subtitle">Slider Completed!</p>
+                </div>
+                <div class="reward-section">
+                    <div class="gem-glow-rays"></div>
+                    <img src="assets/images/gem_pile_screen.jpg" class="reward-gem-img">
+                    <div class="reward-badge-hexagon"><span>+15</span></div>
+                </div>
+                <div class="win-buttons">
+                    <button class="claim-triple-btn btn btn-success" onclick="location.reload()">Claim ×3 ▶</button>
+                    <button class="claim-standard-btn btn btn-primary" onclick="location.reload()">Claim</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Modal (Matched with index.html) -->
+        <div class="modal-overlay" id="welcome-modal">
+            <div class="welcome-modal-content">
+                <button class="close-welcome-btn" onclick="closeWelcomeModal()">×</button>
+                <div class="welcome-image">
+                    <img src="assets/images/VittalaC.jpg" alt="Welcome">
+                    <div class="welcome-badge">ACTIVE JOURNEY</div>
+                </div>
+                <h2>Explore the Slider!</h2>
+                <div class="welcome-process">
+                    <div class="process-step"><span class="step-icon">📦</span><p>Slide</p></div>
+                    <div class="process-step"><span class="step-icon">✨</span><p>Arrange</p></div>
+                    <div class="process-step"><span class="step-icon">🏆</span><p>Win</p></div>
+                </div>
+                <div class="welcome-progress-card">
+                    <div class="progress-header"><span class="progress-label">Slider Journey</span><span class="progress-percentage" id="welcome-percentage">0%</span></div>
+                    <div class="welcome-progress-track"><div class="welcome-progress-thumb" id="welcome-progress-bar"></div></div>
+                </div>
+                <div class="welcome-actions">
+                    <button class="welcome-btn continue" onclick="closeWelcomeModal()">▶ Continue</button>
+                    <button class="welcome-btn home" onclick="closeWelcomeModal(); switchScreen('library')">🏠 View All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Background Modal -->
+        <div class="modal-overlay" id="background-modal-overlay">
+            <div class="background-modal">
+                <h3 class="bg-modal-title">Board Color</h3>
+                <div class="color-options">
+                    <div class="color-swatch bg-swatch-1 active" onclick="changeBoardBackground('#0f172a')"></div>
+                    <div class="color-swatch bg-swatch-2" onclick="changeBoardBackground('#1e293b')"></div>
+                    <div class="color-swatch bg-swatch-4" onclick="changeBoardBackground('#f3f4f6')"></div>
+                </div>
+                <button class="palette-done-btn" onclick="toggleBackgroundModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio -->
+    <audio id="moveSound" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+    <audio id="winMusic" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+
+    <!-- Scripts -->
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/slider_engine.js"></script>
+    <script src="assets/js/ui_slider.js"></script>
+
+    <script>
+        function getImgCategories(filename) {
+            let f = filename.toLowerCase();
+            let cats = [];
+
+            if (/temple|konarka|vittala|stupa|shiva|parvati|ganesh|pol|mandir|church|mosque|shrine|spiritual|god|ep_|oy_|ht_/.test(f)) {
+                cats.push('Temple', 'Spiritual');
+            }
+            if (/monuments|fort|castle|palace|gate|mamallapuram|sanchi|mahal|qutub|minar|hampi|ajanta|ellora|ancient|landmark|heritage|history|sculpture|carving|pano|house|village/.test(f)) {
+                cats.push('Monuments', 'Heritage', 'Architecture', 'Landmarks', 'History', 'Ancient');
+            }
+            if (/unesco|heritage|ancient|history|monument|sanchi|hampi|ajanta|ellora|mamallapuram|temple|sculpture/.test(f)) cats.push('UNESCO');
+            if (/dance|kathak|arts|folk|stage|sculpture|painting|statue|carving|shutterstock|dreamstime|glass|ep_/.test(f)) {
+                cats.push('Dance', 'Arts', 'Sculpture');
+            }
+            if (/culture|holi|festival|india|tradition|ritual|street|local|glass|house|sunset|kitten|shutterstock|dreamstime|tradition/.test(f)) {
+                cats.push('Culture', 'Festivals', 'Tradition');
+            }
+            if (cats.length === 0) {
+                cats.push('Heritage', 'Architecture');
+            }
+            return [...new Set(cats)].join(' ');
+        }
+
+        function getImgDescription(filename, categoryStr) {
+            let f = filename.toLowerCase();
+            if (f.includes('konarka')) return "The magnificent Sun Temple of Konark, known for its intricate stone carvings and chariot design.";
+            if (f.includes('vittala') || f.includes('hampi')) return "The iconic Vittala Temple of Hampi, famous for its musical pillars and stone chariot.";
+            if (f.includes('sanchi') || f.includes('stupa')) return "The Great Stupa at Sanchi, an outstanding specimen of ancient Buddhist art and architecture.";
+            if (f.includes('ajanta') || f.includes('ellora')) return "Ancient rock-cut caves featuring exquisite paintings and timeless rock-cut sculptures.";
+            if (f.includes('qutub') || f.includes('minar')) return "The towering Qutub Minar, a UNESCO World Heritage Site representing early Islamic architecture in India.";
+            if (f.includes('taj') || f.includes('mahal')) return "The Taj Mahal, an ivory-white marble mausoleum and universal symbol of eternal love.";
+            if (f.includes('dance') || f.includes('kathak')) return "Experience the grace and intricate footwork of traditional Indian classical dance forms.";
+            if (f.includes('holi') || f.includes('festival')) return "The vibrant festival of colors celebrating the victory of good over evil and the arrival of spring.";
+            if (f.includes('ganesh')) return "A spiritual depiction of Lord Ganesha, the remover of obstacles and the god of new beginnings.";
+            if (f.includes('mamallapuram')) return "A historic town famous for its exquisite ancient Hindu group of monuments and rock-cut sanctuaries.";
+
+            if (categoryStr.includes('Temple') || categoryStr.includes('Spiritual')) return "Discover the spiritual heritage, peaceful ambiance, and intricate carvings of this sacred temple.";
+            if (categoryStr.includes('UNESCO')) return "Explore this UNESCO World Heritage site, standing as a beautiful testament to human history.";
+            if (categoryStr.includes('Monuments') || categoryStr.includes('History')) return "A magnificent monument that stands as a silent witness to centuries of rich cultural history.";
+            if (categoryStr.includes('Dance') || categoryStr.includes('Arts')) return "A beautiful depiction of Indian classical arts, cultural expressions, and storytelling traditions.";
+            if (categoryStr.includes('Culture') || categoryStr.includes('Tradition')) return "Immerse yourself in the rich tapestry of Indian tradition, vibrant festivals, and local life.";
+
+            return "Uncover the hidden stories and timeless beauty captured in this incredible historical piece.";
+        }
+
+        window.handleImageLoad = function (img) {
+            setTimeout(() => {
+                img.classList.add('loaded');
+                img.parentElement.classList.add('image-ready');
+            }, 400 + Math.random() * 400);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+             // Hide loading overlay after content initializes (Matching index.html)
+            setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 500);
+                }
+            }, 1200);
+
+            if (typeof populateHomeSlider === 'function') {
+                populateHomeSlider('assets/box-puzzle', ["img 1.jpeg", "img 2.jpeg", "img 3.jpeg", "img 4.jpeg"]);
+            }
+            if (typeof initSubHeadingCycle === 'function') initSubHeadingCycle();
+            
+            // Populating library with AOS cards (Matching index.html premium style)
+            const grid = document.getElementById('main-puzzle-grid');
+            if (grid && puzzleImageFiles) {
+                grid.innerHTML = "";
+                let count = 0;
+                puzzleImageFiles.filter(img => !img.includes('icon') && !img.includes('gem')).forEach((img, idx) => {
+                    count++;
+                    let catString = getImgCategories(img);
+                    let description = getImgDescription(img, catString);
+                    
+                    let statusBadge = '';
+                    if (count === 1) statusBadge = '<span class="badge-status badge-new-label">NEW</span>';
+                    else if (count === 2) statusBadge = '<span class="badge-status badge-trending">TRENDING</span>';
+                    else if (count === 3) statusBadge = '<span class="badge-status badge-latest">LATEST</span>';
+                    
+                    let puzzleName = img.replace(/\.[^/.]+$/, "").replace(/_/g, " ").replace(/shutterstock\s\d+\s?/, "").trim();
+                    if (!puzzleName || puzzleName.length < 3) puzzleName = "Ancient Wonder";
+
+                    let cardHTML = '';
+                    if (count === 1) {
+                         cardHTML = `
+                            <div class="puzzle-card progress-card" 
+                                 data-category="${catString}" 
+                                 data-aos="fade-up" 
+                                 data-aos-delay="0">
+                                <div class="skeleton-box card-loader"></div>
+                                <img src="assets/images/${img}" 
+                                     alt="${img}" 
+                                     loading="lazy" 
+                                     class="w-100 h-100 object-fit-cover"
+                                     onload="handleImageLoad(this)">
+                                <div class="card-action-overlay"><button class="resume-btn">Continue</button></div>
+                                <div class="card-footer">
+                                    <div class="footer-top-row">
+                                        <h5 class="card-title">${puzzleName}</h5>
+                                        <span class="card-progress-badge">30%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 30%;"></div>
+                                    </div>
+                                </div>
+                            </div>`;
+                    } else {
+                        cardHTML = `
+                            <div class="puzzle-card" 
+                                 data-category="${catString}" 
+                                 data-aos="fade-up" 
+                                 data-aos-delay="${(count % 10) * 50}">
+                                ${statusBadge}
+                                <div class="skeleton-box card-loader"></div>
+                                <img src="assets/images/${img}" 
+                                     alt="${img}" 
+                                     loading="lazy" 
+                                     class="w-100 h-100 object-fit-cover"
+                                     onload="handleImageLoad(this)">
+                                
+                                <div class="card-footer">
+                                    <div class="footer-top-row">
+                                        <h5 class="card-title">${puzzleName}</h5>
+                                        <span class="card-progress-badge" style="color: #64748b; background: rgba(100, 116, 139, 0.1); border-color: rgba(100, 116, 139, 0.2);">0%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="card-hover-overlay">
+                                    <div class="hover-text">${description}</div>
+                                </div>
+                            </div>`;
+                    }
+                    grid.innerHTML += cardHTML;
+                });
+            }
+
+            // Populate Daily
+            const dailyGrid = document.getElementById('daily-puzzle-grid');
+            if (dailyGrid && puzzleImageFiles) {
+                dailyGrid.innerHTML = "";
+                let dayCount = 0;
+                puzzleImageFiles.slice(10, 18).forEach(img => {
+                    dayCount++;
+                    dailyGrid.innerHTML += `
+                        <div class="puzzle-card" data-aos="zoom-in" data-aos-delay="${dayCount * 50}">
+                            <div class="skeleton-box card-loader"></div>
+                            <img src="assets/images/${img}" class="w-100 h-100 object-fit-cover" onload="handleImageLoad(this)">
+                            <div class="card-footer">
+                                <h5 class="card-title">Daily ${dayCount}</h5>
+                            </div>
+                        </div>`;
+                });
+            }
+            
+            // Journey Map nodes
+            const jMap = document.getElementById('journey-map-slider');
+            if (jMap) {
+                const nodes = [
+                    { id: 3, name: "Sun Temple", img: "Konarka_Temple (4).jpg", status: 'current' },
+                    { id: 2, name: "Kathak Hall", img: "shutterstock_1245042736.jpg", status: 'completed' },
+                    { id: 1, name: "Vittala Wheel", img: "VittalaC.jpg", status: 'completed' }
+                ];
+                nodes.forEach(n => {
+                    const entry = document.createElement('div');
+                    entry.className = `journey-node ${n.status}`;
+                    entry.innerHTML = `
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/${n.img}" class="node-thumb loaded">
+                                <div class="node-circle">${n.id}</div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL ${n.id}</span>
+                                <span class="node-name">${n.name}</span>
+                            </div>
+                        </div>`;
+                    jMap.appendChild(entry);
+                });
+            }
+        });
+
+        function closeWelcomeModal() {
+            const modal = document.getElementById('welcome-modal');
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => modal.style.display = 'none', 400);
+            }
+        }
+    </script>
+</body>
+</html>
