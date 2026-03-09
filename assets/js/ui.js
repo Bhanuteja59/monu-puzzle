@@ -216,7 +216,7 @@ function switchScreen(screenId) {
     }
 
     // PREMIUM SPLASH TRANSITION FOR CERTAIN SCREENS
-    if (screenId === 'journey' || screenId === 'game') {
+    if (screenId === 'game') {
         triggerPremiumSplash(() => executeSwitchScreen(screenId));
         return;
     }
@@ -569,6 +569,20 @@ window.filterCategory = function (category, element) {
         updateTabIndicator(element);
     }
 
+    // Sync the Category Modal items as well
+    document.querySelectorAll('.category-item').forEach(item => {
+        let catItemVal = item.getAttribute('data-value');
+        if (!catItemVal) {
+            catItemVal = item.querySelector('span') ? item.querySelector('span').textContent.trim() : item.innerText.trim();
+        }
+        
+        if (catItemVal === category || (category === 'Temple' && catItemVal === 'Temples')) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+
     // Only filter cards in the main library grid, not daily or other screens
     const grid = document.getElementById('main-puzzle-grid');
     if (!grid) return;
@@ -615,19 +629,25 @@ window.filterCategory = function (category, element) {
 }
 
 // Modal Logic
-const modal = document.getElementById('category-modal-overlay');
-const menuBtn = document.querySelector('.category-menu-btn');
-
-if (menuBtn) {
-    menuBtn.addEventListener('click', () => {
+window.openCategoryModal = function() {
+    const modal = document.getElementById('category-modal-overlay');
+    if (modal) {
         modal.style.display = 'flex';
-    });
+    }
+};
+
+// Also attach listener to any statically named generic buttons
+const menuBtn = document.querySelector('.category-menu-btn');
+if (menuBtn) {
+    menuBtn.addEventListener('click', window.openCategoryModal);
 }
 
-if (modal) {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
+// Attach overlay click to close
+const modalOverlay = document.getElementById('category-modal-overlay');
+if (modalOverlay) {
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.style.display = 'none';
         }
     });
 }
@@ -636,11 +656,20 @@ document.querySelectorAll('.category-item').forEach(item => {
     item.addEventListener('click', () => {
         document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
-        modal.style.display = 'none';
+        const modalOverlayRef = document.getElementById('category-modal-overlay');
+        if (modalOverlayRef) {
+            modalOverlayRef.style.display = 'none';
+        }
 
-        // Fix: Use span text or innerText to avoid capturing hidden characters/images
-        const category = item.querySelector('span') ? item.querySelector('span').textContent.trim() : item.innerText.trim();
-        filterCategory(category);
+        // Use data-value if available to prevent pluralization bugs (e.g. Temples -> Temple)
+        let category = item.getAttribute('data-value');
+        if (!category) {
+            category = item.querySelector('span') ? item.querySelector('span').textContent.trim() : item.innerText.trim();
+        }
+        
+        if (typeof filterCategory === 'function') {
+            filterCategory(category);
+        }
     });
 });
 

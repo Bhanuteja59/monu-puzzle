@@ -119,7 +119,7 @@
                     let cardHTML = '';
                     let puzzleName = img.replace(/\.[^/.]+$/, "").replace(/_/g, " ").replace(/shutterstock\s\d+\s?/, "").trim();
                     if (!puzzleName || puzzleName.length < 3) puzzleName = "Ancient Wonder";
-                    
+
                     if (count === 1) {
                         // First card is special: "In Progress" style at 30%
                         cardHTML = `
@@ -337,7 +337,7 @@
                             <line x1="12" y1="3" x2="12" y2="21" />
                             <line x1="3" y1="12" x2="21" y2="12" />
                         </svg>
-                        Box Puzzle
+                        MonuSlider
                     </button>
                 </div>
 
@@ -362,7 +362,8 @@
                     <!-- Category Tabs -->
                     <div class="tabs-wrapper ">
                         <div class="tabs-scroll Container">
-                            <div class="tab-indicator" id="tab-active-pill" style="width: 82px; left: 2px; height: 43px; top: 4px;"></div>
+                            <div class="tab-indicator" id="tab-active-pill"
+                                style="width: 82px; left: 2px; height: 43px; top: 4px;"></div>
                             <div class="tab active" onclick="filterCategory('All', this)">
                                 <span>🏠 All</span>
                             </div>
@@ -423,7 +424,6 @@
             </div>
         </div>
         <!-- Journey Screen -->
-        <!-- Journey Screen -->
         <div id="journey-screen" class="screen" style="display: block;">
             <!-- Animated Premium SVG Puzzle Background -->
             <div class="journey-bg-particles">
@@ -471,7 +471,7 @@
                 </div>
             </div>
             <div class="content-wrapper">
-                <div id="journey-map-jigsaw" class="journey-map">
+                <div class="journey-map">
                     <div class="loot-bonus-node milestone">
                         <div class="loot-milestone-divider">
                             <div class="milestone-line"></div>
@@ -1018,7 +1018,7 @@
                     <img src="assets/images/shutterstock_693066103.jpg" alt="All" onload="handleImageLoad(this)">
                     <span>All</span>
                 </div>
-                <div class="category-item">
+                <div class="category-item" data-value="Temple">
                     <img src="assets/images/Konarka_Temple (4).jpg" alt="Temple" onload="handleImageLoad(this)">
                     <span>Temples</span>
                 </div>
