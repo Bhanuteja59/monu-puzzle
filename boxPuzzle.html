@@ -20,7 +20,9 @@
 
     <style>
         /* Prevents pull-to-refresh and keeps app feeling native */
-        body { overscroll-behavior-y: contain; }
+        body {
+            overscroll-behavior-y: contain;
+        }
     </style>
 </head>
 
@@ -71,18 +73,22 @@
     <div id="game-container">
         <!-- Top Header -->
         <header class="top-header">
-            <h1 class="screen-title" id="current-screen-title" onclick="switchScreen('library')" style="cursor: pointer;">MonuSlider</h1>
+            <h1 class="screen-title" id="current-screen-title" onclick="switchScreen('library')"
+                style="cursor: pointer;">MonuSlider</h1>
             <div class="header-right-tools">
                 <button class="header-icon-btn" title="News">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
                         <path d="M18 14h-8" />
                         <path d="M15 18h-5" />
                         <path d="M10 6h8v4h-8V6Z" />
                     </svg>
                 </button>
                 <button class="header-icon-btn" title="Awards">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
                         <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
                         <path d="M4 22h16" />
@@ -92,7 +98,8 @@
                     </svg>
                 </button>
                 <button class="header-icon-btn" id="profile-trigger" onclick="toggleProfileMenu()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="1" />
                         <circle cx="12" cy="5" r="1" />
                         <circle cx="12" cy="19" r="1" />
@@ -106,18 +113,21 @@
             <div class="content-wrapper">
                 <div class="screen-toggle-bar">
                     <button class="toggle-btn" onclick="window.location.href='index.html'">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z" />
                         </svg>
                         Jigsaw Puzzles
                     </button>
                     <button class="toggle-btn active" onclick="switchLibraryTab('box', this)">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                             <line x1="12" y1="3" x2="12" y2="21" />
                             <line x1="3" y1="12" x2="21" />
                         </svg>
-                        Box Puzzle
+                        MonuSlider
                     </button>
                 </div>
 
@@ -134,7 +144,8 @@
 
                     <div class="tabs-wrapper ">
                         <div class="tabs-scroll Container">
-                            <div class="tab-indicator" id="tab-active-pill" style="width: 82px; left: 2px; height: 43px; top: 4px;"></div>
+                            <div class="tab-indicator" id="tab-active-pill"
+                                style="width: 82px; left: 2px; height: 43px; top: 4px;"></div>
                             <div class="tab active" onclick="filterCategory('All', this)">
                                 <span>🏠 All</span>
                             </div>
@@ -167,7 +178,8 @@
             <div class="content-wrapper">
                 <div class="featured-card">
                     <div class="featured-img-container">
-                        <img src="assets/images/slide/dairyslide.jpeg" alt="Daily Slide" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="assets/images/slide/dairyslide.jpeg" alt="Daily Slide"
+                            style="width: 100%; height: 100%; object-fit: cover;">
                         <div class="date-badge">
                             <div class="month">MARCH</div>
                             <div class="day">09</div>
@@ -188,9 +200,300 @@
         </div>
 
         <!-- Journey Screen -->
-        <div id="journey-screen" class="screen" style="display: none;">
+        <!-- Journey Screen -->
+        <div id="journey-screen" class="screen" style="display: block;">
+            <!-- Animated Premium SVG Puzzle Background -->
+            <div class="journey-bg-particles">
+                <div class="particle p1">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="particle p2">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="particle p3">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="particle p4">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="particle p5">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="particle p6">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21,11c0-1.11-.89-2-2-2h-1c-.55,0-1-.45-1-1V7c0-2.21-1.79-4-4-4S9,4.79,9,7v1c0,.55-.45,1-1,1H7c-2.21,0-4,1.79-4,4s1.79,4,4,4h1c.55,0,1,.45,1,1v1c0,2.21,1.79,4,4,4s4-1.79,4-4v-1c0-.55,.45-1,1-1h1c1.11,0,2-.89,2-2v-1c0-.33,0-.67,0-1Z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
             <div class="content-wrapper">
-                <div class="journey-map" id="journey-map-slider"></div>
+                <div class="journey-map">
+                    <div class="loot-bonus-node milestone">
+                        <div class="loot-milestone-divider">
+                            <div class="milestone-line"></div>
+                            <div class="milestone-star">⭐</div>
+                            <div class="milestone-line"></div>
+                        </div>
+                        <div class="loot-badge">Loot Unlocked</div>
+                        <div class="loot-box">
+                            <div class="loot-mystery-img image-ready">
+                                <img src="assets/images/shutterstock_1182334075.jpg" alt="Loot"
+                                    onload="handleImageLoad(this)" class="loaded">
+                                <div class="loot-overlay-text">?</div>
+                            </div>
+                            <div class="loot-text-content">
+                                <h4>Level 10 Cleared!</h4>
+                                <p>Grab your loot of 200 Monu coins</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="journey-node locked">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/shutterstock_1182334075.jpg" alt="Hampi Ruins"
+                                    class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    🔒
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 10</span>
+                                <span class="node-name">Hampi Ruins</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Expert</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="journey-node locked">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/shutterstock_140474848 Ganesh Pol.jpg" alt="Ganesh Pol"
+                                    class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    🔒
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 9</span>
+                                <span class="node-name">Ganesh Pol</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Expert</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="journey-node locked">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/shutterstock_1048124914.jpg" alt="Ajanta Caves"
+                                    class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    🔒
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 8</span>
+                                <span class="node-name">Ajanta Caves</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Master</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="journey-node locked">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/shutterstock_1430024843 Sas Bahu Temple.jpg" alt="Sas Bahu"
+                                    class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    🔒
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 7</span>
+                                <span class="node-name">Sas Bahu</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Master</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="journey-node locked">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/shutterstock_89576581 Sultana’s House (1).jpg"
+                                    alt="Sultan House" class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    🔒
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 6</span>
+                                <span class="node-name">Sultan House</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Hard</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="loot-bonus-node milestone">
+                        <div class="loot-milestone-divider">
+                            <div class="milestone-line"></div>
+                            <div class="milestone-star">⭐</div>
+                            <div class="milestone-line"></div>
+                        </div>
+                        <div class="loot-badge">Loot Unlocked</div>
+                        <div class="loot-box">
+                            <div class="loot-mystery-img image-ready">
+                                <img src="assets/images/shutterstock_1182334075.jpg" alt="Loot"
+                                    onload="handleImageLoad(this)" class="loaded">
+                                <div class="loot-overlay-text">?</div>
+                            </div>
+                            <div class="loot-text-content">
+                                <h4>Level 5 Cleared!</h4>
+                                <p>Grab your loot of 200 Monu coins</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="journey-node locked">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/shutterstock_1101562826.jpg" alt="Taj Morning"
+                                    class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    🔒
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 5</span>
+                                <span class="node-name">Taj Morning</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Hard</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="journey-node locked">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/shutterstock_1073481062.jpg" alt="Qutub Minar"
+                                    class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    🔒
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 4</span>
+                                <span class="node-name">Qutub Minar</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Casual</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="journey-node current">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/Konarka_Temple (4).jpg" alt="Sun Temple"
+                                    class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    3
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 3</span>
+                                <span class="node-name">Sun Temple</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Casual</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+                            <div class="node-current-status">ACTIVE</div>
+                        </div>
+                    </div>
+                    <div class="journey-node completed">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/dreamstime_xxl_223512537.jpg" alt="Kathak Arts"
+                                    class="node-thumb loaded" onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    ✓
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 2</span>
+                                <span class="node-name">Kathak Arts</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Casual</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="journey-node completed">
+                        <div class="node-container">
+                            <div class="node-image-frame image-ready">
+                                <img src="assets/images/VittalaC.jpg" alt="Vittala Wheel" class="node-thumb loaded"
+                                    onload="handleImageLoad(this)">
+                                <div class="node-circle">
+                                    ✓
+                                </div>
+                            </div>
+                            <div class="node-info-box">
+                                <span class="node-level-tag">LEVEL 1</span>
+                                <span class="node-name">Vittala Wheel</span>
+                                <div class="node-meta">
+                                    <span class="node-type">Casual</span>
+                                    <span class="node-reward">💎 20</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="journey-footer">
+                <div class="journey-reward-badge">
+                    <span class="coin-icon">🟡</span> Unlock 150 Monu Coins in Level 3
+                </div>
+                <button class="journey-play-btn">Play Level 3</button>
             </div>
         </div>
 
@@ -208,20 +511,28 @@
                                 <h3>Slider Explorer</h3>
                                 <div class="xp-progress-bar-container">
                                     <div class="xp-label">0 / 500 XP</div>
-                                    <div class="xp-bar-outer"><div class="xp-bar-fill" style="width: 0%;"></div></div>
+                                    <div class="xp-bar-outer">
+                                        <div class="xp-bar-fill" style="width: 0%;"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="profile-block stats-grid-block" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
-                        <div class="stat-card" style="background: #f8fafc; padding: 16px; border-radius: 16px; text-align: center;">
-                            <span class="stat-label" style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Solved</span>
+                    <div class="profile-block stats-grid-block"
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                        <div class="stat-card"
+                            style="background: #f8fafc; padding: 16px; border-radius: 16px; text-align: center;">
+                            <span class="stat-label"
+                                style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Solved</span>
                             <span class="stat-value" style="font-size: 20px; font-weight: 800; color: #0f172a;">0</span>
                         </div>
-                        <div class="stat-card" style="background: #f8fafc; padding: 16px; border-radius: 16px; text-align: center;">
-                            <span class="stat-label" style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Stars</span>
-                            <span class="stat-value" style="font-size: 20px; font-weight: 800; color: #0f172a;">⭐ 0</span>
+                        <div class="stat-card"
+                            style="background: #f8fafc; padding: 16px; border-radius: 16px; text-align: center;">
+                            <span class="stat-label"
+                                style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Stars</span>
+                            <span class="stat-value" style="font-size: 20px; font-weight: 800; color: #0f172a;">⭐
+                                0</span>
                         </div>
                     </div>
                 </div>
@@ -232,7 +543,8 @@
         <div id="setup-screen" class="screen" style="display: none;">
             <header class="top-header">
                 <button class="back-btn" onclick="switchScreen('library')">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M15 18l-6-6 6-6" />
                     </svg>
                 </button>
@@ -247,10 +559,14 @@
             <div class="difficulty-selector">
                 <span class="difficulty-label">Casual</span>
                 <div class="piece-options">
-                    <div class="piece-option" onclick="selectDifficulty(9)"><span class="count">9</span><span class="label">Pieces</span></div>
-                    <div class="piece-option active" onclick="selectDifficulty(16)"><span class="count">16</span><span class="label">Pieces</span></div>
-                    <div class="piece-option" onclick="selectDifficulty(25)"><span class="count">25</span><span class="label">Pieces</span></div>
-                    <div class="piece-option" onclick="selectDifficulty(36)"><span class="count">36</span><span class="label">Pieces</span></div>
+                    <div class="piece-option" onclick="selectDifficulty(9)"><span class="count">9</span><span
+                            class="label">Pieces</span></div>
+                    <div class="piece-option active" onclick="selectDifficulty(16)"><span class="count">16</span><span
+                            class="label">Pieces</span></div>
+                    <div class="piece-option" onclick="selectDifficulty(25)"><span class="count">25</span><span
+                            class="label">Pieces</span></div>
+                    <div class="piece-option" onclick="selectDifficulty(36)"><span class="count">36</span><span
+                            class="label">Pieces</span></div>
                 </div>
                 <button class="play-btn btn btn-warning text-white" onclick="switchScreen('game')">Play Now</button>
             </div>
@@ -260,13 +576,22 @@
         <div id="game-screen" class="screen" style="display: none;">
             <header class="game-header">
                 <button class="tool-icon-btn back-btn-premium" onclick="switchScreen('setup')">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M15 18l-6-6 6-6" />
                     </svg>
                 </button>
                 <div class="game-header-tools">
-                    <span class="tool-icon" onclick="toggleImagePreview()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
-                    <span class="tool-icon" onclick="toggleBackgroundModal()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3 1.912 5.886h6.19l-5.007 3.638L17.007 18.41 12 14.772l-5.007 3.638 1.912-5.886L3.898 8.886h6.19L12 3z"/></svg></span>
+                    <span class="tool-icon" onclick="toggleImagePreview()"><svg width="22" height="22"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg></span>
+                    <span class="tool-icon" onclick="toggleBackgroundModal()"><svg width="22" height="22"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path
+                                d="m12 3 1.912 5.886h6.19l-5.007 3.638L17.007 18.41 12 14.772l-5.007 3.638 1.912-5.886L3.898 8.886h6.19L12 3z" />
+                        </svg></span>
                 </div>
             </header>
             <div class="image-preview-dropdown" id="game-image-preview"><img id="game-preview-img" src=""></div>
@@ -297,6 +622,79 @@
                 <span>Profile</span>
             </div>
         </nav>
+
+        <!-- Category Modal -->
+        <div class="modal-overlay" id="category-modal-overlay">
+            <div class="category-modal" onclick="event.stopPropagation()">
+                <div class="category-item active">
+                    <img src="assets/images/shutterstock_693066103.jpg" alt="All" onload="handleImageLoad(this)">
+                    <span>All</span>
+                </div>
+                <div class="category-item" data-value="Temple">
+                    <img src="assets/images/Konarka_Temple (4).jpg" alt="Temple" onload="handleImageLoad(this)">
+                    <span>Temples</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/VittalaC.jpg" alt="Monuments" onload="handleImageLoad(this)">
+                    <span>Monuments</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/mamallapuram.jpg" alt="UNESCO" onload="handleImageLoad(this)">
+                    <span>UNESCO</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/_EP_3726.jpg" alt="Dance" onload="handleImageLoad(this)">
+                    <span>Dance</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/shutterstock_599694770.jpg" alt="Culture" onload="handleImageLoad(this)">
+                    <span>Culture</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/holi.jpg" alt="Festivals" onload="handleImageLoad(this)">
+                    <span>Festivals</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/sanchi-stupa.jpg" alt="Heritage" onload="handleImageLoad(this)">
+                    <span>Heritage</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/shutterstock_110301533 Western Monuments.jpg" alt="Architecture"
+                        onload="handleImageLoad(this)">
+                    <span>Architecture</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/VittalaC.jpg" alt="History" onload="handleImageLoad(this)">
+                    <span>History</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/glass.jpg" alt="Arts" onload="handleImageLoad(this)">
+                    <span>Arts</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/shutterstock_140474848 Ganesh Pol.jpg" alt="Tradition"
+                        onload="handleImageLoad(this)">
+                    <span>Tradition</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/shutterstock_1430024843 Sas Bahu Temple.jpg" alt="Spiritual"
+                        onload="handleImageLoad(this)">
+                    <span>Spiritual</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/IMG_4319.jpg" alt="Landmarks" onload="handleImageLoad(this)">
+                    <span>Landmarks</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/VittalaC.jpg" alt="Sculpture" onload="handleImageLoad(this)">
+                    <span>Sculpture</span>
+                </div>
+                <div class="category-item">
+                    <img src="assets/images/mamallapuram.jpg" alt="Ancient" onload="handleImageLoad(this)">
+                    <span>Ancient</span>
+                </div>
+            </div>
+        </div>
 
         <!-- Win Overlay (Matched with index.html) -->
         <div id="win-overlay" class="win-screen-overlay">
@@ -329,17 +727,27 @@
                 </div>
                 <h2>Explore the Slider!</h2>
                 <div class="welcome-process">
-                    <div class="process-step"><span class="step-icon">📦</span><p>Slide</p></div>
-                    <div class="process-step"><span class="step-icon">✨</span><p>Arrange</p></div>
-                    <div class="process-step"><span class="step-icon">🏆</span><p>Win</p></div>
+                    <div class="process-step"><span class="step-icon">📦</span>
+                        <p>Slide</p>
+                    </div>
+                    <div class="process-step"><span class="step-icon">✨</span>
+                        <p>Arrange</p>
+                    </div>
+                    <div class="process-step"><span class="step-icon">🏆</span>
+                        <p>Win</p>
+                    </div>
                 </div>
                 <div class="welcome-progress-card">
-                    <div class="progress-header"><span class="progress-label">Slider Journey</span><span class="progress-percentage" id="welcome-percentage">0%</span></div>
-                    <div class="welcome-progress-track"><div class="welcome-progress-thumb" id="welcome-progress-bar"></div></div>
+                    <div class="progress-header"><span class="progress-label">Slider Journey</span><span
+                            class="progress-percentage" id="welcome-percentage">0%</span></div>
+                    <div class="welcome-progress-track">
+                        <div class="welcome-progress-thumb" id="welcome-progress-bar"></div>
+                    </div>
                 </div>
                 <div class="welcome-actions">
                     <button class="welcome-btn continue" onclick="closeWelcomeModal()">▶ Continue</button>
-                    <button class="welcome-btn home" onclick="closeWelcomeModal(); switchScreen('library')">🏠 View All</button>
+                    <button class="welcome-btn home" onclick="closeWelcomeModal(); switchScreen('library')">🏠 View
+                        All</button>
                 </div>
             </div>
         </div>
@@ -359,8 +767,12 @@
     </div>
 
     <!-- Audio -->
-    <audio id="moveSound" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-    <audio id="winMusic" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+    <audio id="moveSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3">
+    </audio>
+    <audio id="winMusic" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3">
+    </audio>
 
     <!-- Scripts -->
     <script src="assets/js/data.js"></script>
@@ -422,7 +834,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-             // Hide loading overlay after content initializes (Matching index.html)
+            // Hide loading overlay after content initializes (Matching index.html)
             setTimeout(() => {
                 const overlay = document.getElementById('loading-overlay');
                 if (overlay) {
@@ -435,7 +847,7 @@
                 populateHomeSlider('assets/box-puzzle', ["img 1.jpeg", "img 2.jpeg", "img 3.jpeg", "img 4.jpeg"]);
             }
             if (typeof initSubHeadingCycle === 'function') initSubHeadingCycle();
-            
+
             // Populating library with AOS cards (Matching index.html premium style)
             const grid = document.getElementById('main-puzzle-grid');
             if (grid && puzzleImageFiles) {
@@ -445,18 +857,18 @@
                     count++;
                     let catString = getImgCategories(img);
                     let description = getImgDescription(img, catString);
-                    
+
                     let statusBadge = '';
                     if (count === 1) statusBadge = '<span class="badge-status badge-new-label">NEW</span>';
                     else if (count === 2) statusBadge = '<span class="badge-status badge-trending">TRENDING</span>';
                     else if (count === 3) statusBadge = '<span class="badge-status badge-latest">LATEST</span>';
-                    
+
                     let puzzleName = img.replace(/\.[^/.]+$/, "").replace(/_/g, " ").replace(/shutterstock\s\d+\s?/, "").trim();
                     if (!puzzleName || puzzleName.length < 3) puzzleName = "Ancient Wonder";
 
                     let cardHTML = '';
                     if (count === 1) {
-                         cardHTML = `
+                        cardHTML = `
                             <div class="puzzle-card progress-card" 
                                  data-category="${catString}" 
                                  data-aos="fade-up" 
@@ -528,7 +940,7 @@
                         </div>`;
                 });
             }
-            
+
             // Journey Map nodes
             const jMap = document.getElementById('journey-map-slider');
             if (jMap) {
@@ -565,4 +977,5 @@
         }
     </script>
 </body>
+
 </html>
